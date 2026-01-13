@@ -3,8 +3,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/login.css">
 </head>
 <body>
-    <h2>Página de Login!</h2>
+   <div class="container-login">
+        <div>
+            <form action="/login" class="devbook-form" id="login">
+                <h2>Login</h2>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                <a href="/#">Clique para criar sua conta</a>
+                <button type="submit" class="btn-devbook">Login</button>
+            </form>
+        </div>
+   </div>
 </body>
 </html>

@@ -9,13 +9,13 @@ var rotasLogin = []Rota{
 	{
 		URI:                "/",
 		Metodo:             http.MethodGet,
-		Funcao:             controllers.CarregarTelaLogin,
+		Funcao:             controllers.CarregarTelaDeLogin,
 		RequerAutenticacao: false,
 	},
 	{
 		URI:                "/login",
 		Metodo:             http.MethodGet,
-		Funcao:             controllers.CarregarTelaLogin,
+		Funcao:             controllers.CarregarTelaDeLogin,
 		RequerAutenticacao: false,
 	},
 }

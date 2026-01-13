@@ -6,7 +6,7 @@ import (
 )
 
 // Renderiza a tela de login
-func CarregarTelaLogin(w http.ResponseWriter, r *http.Request) {
+func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "login.html", nil)
 }
 

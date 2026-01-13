@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 	"webapp/src/router"
+	"webapp/src/utils"
 )
 
 func main() {
-	fmt.Println("Rodando webapp")
-
+	utils.CarregarTemplates()
 	r := router.Gerar()
-	http.Handle("/", r)
-
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	
+	fmt.Println("Rodando webapp")
+	log.Fatal(http.ListenAndServe(":3000", r))
 }

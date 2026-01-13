@@ -21,13 +21,10 @@ function criarUsuario(e) {
             email: $('#email').val(),
             nick: $('#nick').val(),
             senha: senha
-        }),
-        success: function(response) {
-            alert("Usuário criado com sucesso!");
-            window.location.href = '/login';
-        },
-        error: function(xhr, status, error) {
-            alert("Erro ao criar usuário: " + xhr.responseText);
-        }
-    });
+        })
+    }).done(res => {
+        alert("Usuário criado com sucesso!");
+    }).fail(fail => {
+        alert("Erro ao criar usuário: " + fail.responseText);
+    })
 }

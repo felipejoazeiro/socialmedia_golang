@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"webapp/src/config"
 	"webapp/src/respostas"
 )
 
@@ -21,7 +22,8 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroApi{Mensagem: err.Error()})
 	}
 
-	res, err := http.Post("http://localhost:5000/usuarios", "application/json", bytes.NewBuffer(usuario))
+	url := fmt.Sprintf("%s/usuarios", config.ApiUrl)
+	res, err := http.Post(url, "application/json", bytes.NewBuffer(usuario))
 	if err != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
 	}

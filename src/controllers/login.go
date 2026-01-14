@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"webapp/src/config"
 	"webapp/src/modelos"
 	"webapp/src/respostas"
 )
@@ -22,7 +23,8 @@ func FazerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := http.Post("http://api:5000/login", "application/json", bytes.NewBuffer(usuario))
+	url := fmt.Sprintf("%s/login", config.ApiUrl)
+	res, err := http.Post(url, "application/json", bytes.NewBuffer(usuario))
 	if err != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: "Erro ao fazer requisição à API"})
 		return
@@ -45,4 +47,6 @@ func FazerLogin(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroApi{Mensagem: err.Error()})
 		return
 	}
+
+
 }

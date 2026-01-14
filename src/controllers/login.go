@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"webapp/src/modelos"
 	"webapp/src/respostas"
 )
 
@@ -27,14 +28,21 @@ func FazerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, _ := ioutil.ReadAll(res.Body)
+	token, _ := io.ReadAll(res.Body)
 
 	fmt.Println(res.StatusCode, string(token))
 
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		respostas.JSON(w, http.StatusUnauthorized, respostas.ErroApi{Mensagem: "Credenciais inválidas"})
+	if res.StatusCode >= 400 {
+		respostas.TratarStatusCodeErro(w, res)
+		return
+	}
+
+	var dadosAuth modelos.DadosAutenticacao
+
+	if err = json.NewDecoder(res.Body).Decode(&dadosAuth); err != nil {
+		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroApi{Mensagem: err.Error()})
 		return
 	}
 }

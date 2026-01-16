@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/modelos"
 	"webapp/src/respostas"
 )
@@ -48,5 +49,10 @@ func FazerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err = cookies.Salvar(w, dadosAuth.ID, dadosAuth.Token); err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: "Erro ao salvar cookies"})
+		return
+	}
 
+	respostas.JSON(w, http.StatusOK, nil)
 }

@@ -1,5 +1,7 @@
 $('#nova-publicacao').on('submit', criarPublicacao);
-$('.curtir-publicacao').on('click', curtirPublicacao);
+$(document).on('click', '.curtir-publicacao', curtirPublicacao);
+$(document).on('click', '.descutir-publicacao', descurtirPublicacao);
+
 
 function criarPublicacao(e) {
     e.preventDefault();
@@ -34,9 +36,36 @@ function curtirPublicacao(e) {
         const contadorCurtidas = elementoClicado.next('span');
         let curtidasAtuais = parseInt(contadorCurtidas.text());
         contadorCurtidas.text(curtidasAtuais + 1);
+
+        elementoClicado.addClass('descutir-publicacao').addClass('text-danger').removeClass('curtir-publicacao');
+        elementoClicado.off('click').on('click', descurtirPublicacao);
     }).fail(fail => {
         alert("Erro ao curtir publicação: " + fail.responseText);
     }).always(() => {
         elementoClicado.prop('disabled', false);
     });
 }
+
+function descurtirPublicacao(e) {
+    e.preventDefault();
+    const elementoClicado = $(e.currentTarget);
+    const publicacaoId = elementoClicado.closest('div').data('publicacao-id');
+    elementoClicado.prop('disabled', true);
+    console.log("Descurtindo publicação ID: " + publicacaoId);
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}/descurtir`,
+        method: 'POST'
+    }).done(res => {
+        const contadorCurtidas = elementoClicado.next('span');
+        let curtidasAtuais = parseInt(contadorCurtidas.text());
+        contadorCurtidas.text(curtidasAtuais - 1);
+        elementoClicado.addClass('curtir-publicacao').removeClass('descutir-publicacao').removeClass('text-danger');
+        elementoClicado.off('click').on('click', curtirPublicacao);
+    }).fail(fail => {
+        alert("Erro ao descurtir publicação: " + fail.responseText);
+    }).always(() => {
+        elementoClicado.prop('disabled', false);
+    });
+}
+

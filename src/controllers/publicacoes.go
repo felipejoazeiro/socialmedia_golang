@@ -153,3 +153,26 @@ func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
 	}
 	respostas.JSON(w, res.StatusCode, nil)
 }
+
+func DeletarPublicacao(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	publicacaoId, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroApi{Mensagem: "ID da publicação inválido"})
+		return
+	}
+	url := fmt.Sprintf("%s/publicacoes/%d", config.ApiUrl, publicacaoId)
+
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodDelete, url, nil)
+	if err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		respostas.TratarStatusCodeErro(w, res)
+		return
+	}
+	respostas.JSON(w, res.StatusCode, nil)
+}

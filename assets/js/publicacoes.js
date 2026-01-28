@@ -19,7 +19,12 @@ function criarPublicacao(e) {
     }).done(res => {
         window.location = "/home";
     }).fail(fail => {
-        alert("Erro ao criar publicação: " + fail.responseText);
+        Swal.fire({
+            title: 'Erro ao criar publicação',
+            text: fail.responseText,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     })
 }
 
@@ -41,7 +46,12 @@ function curtirPublicacao(e) {
         elementoClicado.addClass('descutir-publicacao').addClass('text-danger').removeClass('curtir-publicacao');
         elementoClicado.off('click').on('click', descurtirPublicacao);
     }).fail(fail => {
-        alert("Erro ao curtir publicação: " + fail.responseText);
+        Swal.fire({
+            title: 'Erro ao curtir publicação',
+            text: fail.responseText,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }).always(() => {
         elementoClicado.prop('disabled', false);
     });
@@ -64,7 +74,12 @@ function descurtirPublicacao(e) {
         elementoClicado.addClass('curtir-publicacao').removeClass('descutir-publicacao').removeClass('text-danger');
         elementoClicado.off('click').on('click', curtirPublicacao);
     }).fail(fail => {
-        alert("Erro ao descurtir publicação: " + fail.responseText);
+        Swal.fire({
+            title: 'Erro ao descurtir publicação',
+            text: fail.responseText,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }).always(() => {
         elementoClicado.prop('disabled', false);
     });
@@ -85,9 +100,20 @@ function atualizarPublicacao(e) {
             conteudo: $('#conteudo').val()
         }
     }).done(res => {
-        window.location = "/home";
+        Swal.fire({
+            title: 'Publicação atualizada com sucesso!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location = "/home";
+        });
     }).fail(fail => {
-        alert("Erro ao atualizar publicação: " + fail.responseText);
+        Swal.fire({
+            title: 'Erro ao atualizar publicação',
+            text: fail.responseText,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }).always(() => {
         $(this).prop('disabled', false);
     });
@@ -95,21 +121,38 @@ function atualizarPublicacao(e) {
 
 function deletarPublicacao(e) {
     e.preventDefault();
-    const elementoClicado = $(e.currentTarget);
-    const publicacao = elementoClicado.closest('div');
-    const publicacaoId = publicacao.data('publicacao-id');
-    elementoClicado.prop('disabled', true);
-    console.log("Deletando publicação ID: " + publicacaoId);
-    $.ajax({
-        url: `/publicacoes/${publicacaoId}/deletar`,
-        method: 'DELETE'
-    }).done(res => {
-        publicacao.fadeOut(500, function() {
-            $(this).remove();
-        });
-    }).fail(fail => {
-        alert("Erro ao deletar publicação: " + fail.responseText);
-    }).always(() => {
-        elementoClicado.prop('disabled', false);
+
+    Swal.fire({
+        title: "Atenção!",
+        text: "Você tem certeza que deseja deletar esta publicação? Esta ação não pode ser desfeita.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim, deletar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const elementoClicado = $(e.currentTarget);
+            const publicacao = elementoClicado.closest('div');
+            const publicacaoId = publicacao.data('publicacao-id');
+            elementoClicado.prop('disabled', true);
+            console.log("Deletando publicação ID: " + publicacaoId);
+            $.ajax({
+                url: `/publicacoes/${publicacaoId}/deletar`,
+                method: 'DELETE'
+            }).done(res => {
+                publicacao.fadeOut(500, function() {
+                    $(this).remove();
+                });
+            }).fail(fail => {
+                Swal.fire({
+                    title: 'Erro ao deletar publicação',
+                    text: fail.responseText,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }).always(() => {
+                elementoClicado.prop('disabled', false);
+            });
+        }
     });
 }

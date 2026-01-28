@@ -12,6 +12,11 @@ function fazerLogin(e) {
     }).done(function() {
         window.location.href = "/home";
     }).fail(function() {
-        alert("Falha ao fazer login. Verifique suas credenciais.");
+        Swal.fire({
+            title: 'Erro ao fazer login',
+            text: 'Verifique suas credenciais.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     });
 }

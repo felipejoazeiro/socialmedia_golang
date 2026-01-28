@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/modelos"
@@ -92,3 +93,9 @@ func CarregarPaginaDeEdicaoDePublicacao(w http.ResponseWriter, r *http.Request) 
 	utils.ExecutarTemplate(w, "editar-publicacao.html", publicacao)
 }
 
+func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiUrl, nomeOuNick)
+
+	
+}

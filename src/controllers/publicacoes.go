@@ -121,7 +121,7 @@ func CarregarPaginaDeEdicaoDePublicacao(w http.ResponseWriter, r *http.Request) 
 	utils.ExecutarTemplate(w, "editar-publicacao.html", publicacao)
 }
 
-func EditarPublicacao(w http.ResponseWriter, r *http.Request) {
+func AtualizarPublicacao(w http.ResponseWriter, r *http.Request) {
 	parametros := mux.Vars(r)
 	publicacaoId, erro := strconv.ParseUint(parametros["publicacaoId"], 10, 64)
 	if erro != nil {
@@ -137,7 +137,7 @@ func EditarPublicacao(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroApi{Mensagem: err.Error()})
 		return
 	}
-	url := fmt.Sprintf("%s/publicações/%d/editar", config.ApiUrl, publicacaoId)
+	url := fmt.Sprintf("%s/publicações/%d/atualizar", config.ApiUrl, publicacaoId)
 
 	res, err := requisicoes.FazerReqComAuth(r, http.MethodPut, url, bytes.NewBuffer(publicacao))
 

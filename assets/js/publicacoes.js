@@ -1,7 +1,7 @@
 $('#nova-publicacao').on('submit', criarPublicacao);
 $(document).on('click', '.curtir-publicacao', curtirPublicacao);
 $(document).on('click', '.descutir-publicacao', descurtirPublicacao);
-
+$('#atualizar-publicacao').on('submit', atualizarPublicacao);
 
 function criarPublicacao(e) {
     e.preventDefault();
@@ -66,6 +66,29 @@ function descurtirPublicacao(e) {
         alert("Erro ao descurtir publicação: " + fail.responseText);
     }).always(() => {
         elementoClicado.prop('disabled', false);
+    });
+}
+
+function atualizarPublicacao(e) {
+    e.preventDefault();
+    $(this).prop('disabled', false);
+
+    const publicacaoId = $(this).data('publicacao-id');
+
+    $.ajax({
+        url: `/publicacoes/${publicacaoId}/atualizar`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data : {
+            titulo: $('#titulo').val(),
+            conteudo: $('#conteudo').val()
+        }
+    }).done(res => {
+        window.location = "/home";
+    }).fail(fail => {
+        alert("Erro ao atualizar publicação: " + fail.responseText);
+    }).always(() => {
+        $(this).prop('disabled', false);
     });
 }
 

@@ -97,5 +97,21 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
 	url := fmt.Sprintf("%s/usuarios?usuario=%s", config.ApiUrl, nomeOuNick)
 
-	
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodGet, url, nil)
+	if err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		respostas.TratarStatusCodeErro(w, res)
+		return
+	}
+	var usuarios []modelos.Usuario
+	if err := json.NewDecoder(res.Body).Decode(&usuarios); err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: "Erro ao ler os usuários"})
+		return
+	}
+	utils.ExecutarTemplate(w, "usuarios.html", usuarios)
 }

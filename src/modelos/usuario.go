@@ -1,8 +1,12 @@
 package modelos
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
+	"webapp/src/config"
+	"webapp/src/requisicoes"
 )
 
 type Usuario struct {
@@ -34,16 +38,71 @@ func BuscarUsuarioCompleto(usuarioID uint64, r *http.Request) (Usuario, error) {
 	return usuario, nil
 }
 
+func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioId uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodGet, url, nil)
+	if err != nil {
+		canal <- Usuario{}
+		return
+	}
+	defer res.Body.Close()
+	
+	var usuario Usuario
+	if err = json.NewDecoder(res.Body).Decode(&usuario); err != nil {
+		canal <- Usuario{}
+		return
+	}
 
-func BuscarDadosDoUsuario(canal <-chan Usuario, usuarioId uint64, r *http.Request) {
+	canal <- usuario
 
 }
 
-func BuscarSeguidores(canal <-chan []Usuario, usuarioId uint64, r *http.Request) {
+func BuscarSeguidores(canal chan<- []Usuario, usuarioId uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d/seguidores", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodGet, url, nil)
+	if err != nil {
+		canal <- []Usuario{}
+		return
+	}
+	defer res.Body.Close()
+	
+	var seguidores []Usuario
+	if err = json.NewDecoder(res.Body).Decode(&seguidores); err != nil {
+		canal <- []Usuario{}
+		return
+	}
+	canal <- seguidores
 }
 
-func BuscarSeguindo(canal <-chan []Usuario, usuarioId uint64, r *http.Request) {
+func BuscarSeguindo(canal chan<- []Usuario, usuarioId uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d/seguindo", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodGet, url, nil)
+	if err != nil {
+		canal <- []Usuario{}
+		return
+	}
+	defer res.Body.Close()
+	
+	var seguindo []Usuario
+	if err = json.NewDecoder(res.Body).Decode(&seguindo); err != nil {
+		canal <- []Usuario{}
+		return
+	}
+	canal <- seguindo
 }
 
-func BuscarPublicacoesDoUsuario(canal <-chan []Publicacao, usuarioId uint64, r *http.Request) {
+func BuscarPublicacoesDoUsuario(canal chan<- []Publicacao, usuarioId uint64, r *http.Request) {
+	url := fmt.Sprintf("%s/usuarios/%d/publicacoes", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodGet, url, nil)
+	if err != nil {
+		canal <- []Publicacao{}
+		return
+	}
+	defer res.Body.Close()
+	var publicacoes []Publicacao
+	if err = json.NewDecoder(res.Body).Decode(&publicacoes); err != nil {
+		canal <- []Publicacao{}
+		return
+	}
+	canal <- publicacoes
 }

@@ -31,11 +31,44 @@ func BuscarUsuarioCompleto(usuarioID uint64, r *http.Request) (Usuario, error) {
 	go BuscarSeguindo(canalSeguindo, usuarioID, r)
 	go BuscarPublicacoesDoUsuario(canalPublicacoes, usuarioID, r)
 
-	usuario := <-canalUsuario
-	usuario.Seguidores = <-canalSeguidores
-	usuario.Seguindo = <-canalSeguindo
-	usuario.Publicacoes = <-canalPublicacoes
+	var (
+		usuario     Usuario
+		seguidores  []Usuario
+		seguidos    []Usuario
+		publicacoes []Publicacao
+	)
+
+	for i := 0; i < 4; i++ {
+		select {
+		case usuarioCarregado := <-canalUsuario:
+			if usuarioCarregado.ID == 0 {
+				return Usuario{}, fmt.Errorf("erro ao buscar dados do usuário")
+			}
+			usuario = usuarioCarregado
+		case seguidoresCarregados := <-canalSeguidores:
+			if seguidoresCarregados == nil {
+				return Usuario{}, fmt.Errorf("erro ao buscar seguidores do usuário")
+			}
+			seguidores = seguidoresCarregados
+		case seguidosCarregados := <-canalSeguindo:
+			if seguidosCarregados == nil {
+				return Usuario{}, fmt.Errorf("erro ao buscar usuários seguidos")
+			}
+			seguidos = seguidosCarregados
+		case publicacoesCarregadas := <-canalPublicacoes:
+			if publicacoesCarregadas == nil {
+				return Usuario{}, fmt.Errorf("erro ao buscar publicações do usuário")
+			}
+			publicacoes = publicacoesCarregadas
+		}
+	}
+
+	usuario.Seguidores = seguidores
+	usuario.Seguindo = seguidos
+	usuario.Publicacoes = publicacoes
+
 	return usuario, nil
+
 }
 
 func BuscarDadosDoUsuario(canal chan<- Usuario, usuarioId uint64, r *http.Request) {

@@ -123,11 +123,21 @@ func CarregarPerfilDeUsuario(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroApi{Mensagem: "ID do usuário inválido"})
 		return
 	}
-	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioId,r)
+	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioId, r)
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: erro.Error()})
 		return
 	}
-	utils.ExecutarTemplate(w, "perfil.html", usuario)
+
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	utils.ExecutarTemplate(w, "usuario.html", struct {
+		Usuario         modelos.Usuario
+		UsuarioLogadoID uint64
+	}{
+		Usuario:         usuario,
+		UsuarioLogadoID: usuarioLogadoID,
+	})
 
 }

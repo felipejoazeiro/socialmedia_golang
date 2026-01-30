@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/requisicoes"
 	"webapp/src/respostas"
+
+	"github.com/gorilla/mux"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
@@ -37,4 +41,31 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, res.StatusCode, nil)
 
 	fmt.Println("Usuário criado com sucesso!")
+}
+
+func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioId, err := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroApi{Mensagem: "ID do usuário inválido"})
+		return
+	}
+	url := fmt.Sprintf("%s/usuarios/%d/parar-de-seguir", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodPost, url, nil)
+	if err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		respostas.TratarStatusCodeErro(w, res)
+		return
+	}
+
+	respostas.JSON(w, res.StatusCode, nil)
+
+}
+
+func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 }

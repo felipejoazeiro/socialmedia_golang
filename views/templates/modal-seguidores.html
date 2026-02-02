@@ -1,0 +1,29 @@
+{{define "modal-seguidores"}}
+
+    <div class="modal fade" id="modal-seguidores" tabindex="-1" role="dialog" aria-labelledby="modal-seguidores-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-seguidores-label">Seguidores</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ if .Usuario.Seguidores }}
+                        <ul class="list-group">
+                            {{ range .Usuario.Seguidores }}
+                                <li class="list-group-item">
+                                    <a href="/usuario/{{ .ID }}"> {{ .Nome }} ({{ .Nick }}) </a>    
+                                </li>
+                            {{ end }}
+                        </ul>
+                    {{ else }}
+                        <p class="text-muted text-center">Nenhum seguidor encontrado</p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}

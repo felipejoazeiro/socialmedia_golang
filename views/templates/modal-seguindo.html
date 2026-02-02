@@ -1,0 +1,29 @@
+{{define "modal-seguindo"}}
+
+    <div class="modal fade" id="modal-seguindo" tabindex="-1" role="dialog" aria-labelledby="modal-seguindo-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-seguindo-label">Seguindo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ if .Usuario.Seguindo }}
+                        <ul class="list-group">
+                            {{ range .Usuario.Seguindo }}
+                                <li class="list-group-item">
+                                    <a href="/usuario/{{ .ID }}"> {{ .Nome }} ({{ .Nick }}) </a>    
+                                </li>
+                            {{ end }}
+                        </ul>
+                    {{ else }}
+                        <p class="text-muted text-center">Nenhum usuário encontrado</p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}

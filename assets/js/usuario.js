@@ -2,6 +2,7 @@ $('#parar-de-seguir').on('click', pararDeSeguir);
 $('#seguir').on('click', seguir);
 $('#editar-usuario').on('submit', editar);
 $('#atualizar-senha').on('submit', atualizarSenha);
+$('#deletar-usuario').on('click', deletarUsuario);
 
 function pararDeSeguir(usuarioId) {
     const usuarioId = $(this).data('usuario-id');
@@ -97,5 +98,40 @@ function atualizarSenha(e){
             icon: 'error',
             title: 'Erro ao atualizar senha.',
         });
+    });
+}
+
+function deletarUsuario() {
+    Swal.fire({
+        title: 'Tem certeza que deseja excluir sua conta?',
+        text: "Esta ação é irreversível!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, excluir minha conta!',
+        cancelButtonText: 'Cancelar'    
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/deletar-usuario`,
+                type: 'DELETE',
+            }).done(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Conta excluída com sucesso!',
+                }).then(() => {
+                    window.location = `/logout`;
+                }
+                );
+            }
+            ).fail(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao excluir conta.',
+                });
+            }
+            );
+        }
     });
 }

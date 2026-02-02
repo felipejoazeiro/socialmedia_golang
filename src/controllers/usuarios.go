@@ -138,9 +138,27 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 
 	cookie, _ := cookies.Ler(r)
 	usuarioId, _ := strconv.ParseUint(cookie["id"], 10, 64)
-	url := fmt.Sprintf("%s/usuarios/%d/atualizar-senha", config.ApiUrl, usuarioId)	
+	url := fmt.Sprintf("%s/usuarios/%d/atualizar-senha", config.ApiUrl, usuarioId)
 	res, err := requisicoes.FazerReqComAuth(r, http.MethodPost, url, bytes.NewBuffer(senhas))
 
+	if err != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 400 {
+		respostas.TratarStatusCodeErro(w, res)
+		return
+	}
+	respostas.JSON(w, res.StatusCode, nil)
+}
+
+func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Ler(r)
+	usuarioId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+	url := fmt.Sprintf("%s/usuarios/%d", config.ApiUrl, usuarioId)
+	res, err := requisicoes.FazerReqComAuth(r, http.MethodDelete, url, nil)
 	if err != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroApi{Mensagem: err.Error()})
 		return
